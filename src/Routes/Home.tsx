@@ -1,6 +1,6 @@
 function Home() {
   return (
-    <div>Home
+    <div style={{ backgroundColor: "whitesmoke", height: "200vh" }}>Home
   </div>
   );
 }
