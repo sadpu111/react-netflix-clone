@@ -57,6 +57,18 @@ const Box = styled(motion.div) <{ bgPhoto: string }>`
     transform-origin: right;
   }
   `;
+const Info = styled(motion.div)`
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.lighter};
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  h4 {
+    text-align: center;
+    font-size: 18px;
+  }
+`;
 const boxVariants = {
   normal: {
     scale: 1,
@@ -68,9 +80,9 @@ const boxVariants = {
       delay: 0.5,
       duration: 0.3,
       type: "tween"
-    }
-  }
-}
+    },
+  },
+};
 const rowVariants = {
   hidden: {
     x: window.innerWidth + 5,  // 사용자 윈도우 너비
@@ -82,6 +94,16 @@ const rowVariants = {
     x: -window.innerWidth - 5, // -10은 1과 6이 붙어있는 것을 막기 위해
   },
 };
+const infoVariants = {
+  hover: {
+    opacity: 1,
+    transition: {
+      delay: 0.5,
+      duaration: 0.1,
+      type: "tween",
+    },
+  },
+}
 const offset = 6;
 
 function Home() {
@@ -131,7 +153,15 @@ function Home() {
                       whileHover="hover"
                       key={movie.id}
                       bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
-                    />
+                    >
+                      <Info
+                        variants={infoVariants}
+                        >
+                          <h4>
+                          {movie.title}
+                          </h4>
+                      </Info>
+                    </Box>
                   ))}
               </Row>
             </AnimatePresence>
