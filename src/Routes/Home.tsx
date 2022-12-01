@@ -50,7 +50,27 @@ const Box = styled(motion.div) <{ bgPhoto: string }>`
   background-position: center center;
   height: 150px;
   font-size: 66px;
+  &:first-child {
+    transform-origin: left;
+  }
+  &:last-child {
+    transform-origin: right;
+  }
   `;
+const boxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -50,
+    transition: {
+      delay: 0.5,
+      duration: 0.3,
+      type: "tween"
+    }
+  }
+}
 const rowVariants = {
   hidden: {
     x: window.innerWidth + 5,  // 사용자 윈도우 너비
@@ -74,7 +94,7 @@ function Home() {
       if (leaving) return;
       toggleLeaving(); // setLeaving(true)는 항상 true가 되서 다른 동작이 되지 않음
       const totalMovies = data?.results.length - 1; // if (data)를 통해 maybe undefined 오류 방지. 배너 영화 한 개를 제외한 총 개수
-      const maxIndex = Math.ceil(totalMovies / offset) - 1; // 1개 row당 보여지는 영화의 개수(offset=6)으로 나눠 index 상한 설정
+      const maxIndex = Math.floor(totalMovies / offset) - 1; // 1개 row당 보여지는 영화의 개수(offset=6)으로 나눠 index 상한 설정
       setIndex((prev) => prev === maxIndex ? 0 : prev + 1);
     }
   };
@@ -104,8 +124,11 @@ function Home() {
               /* increaseIndex로 key의 index 값이 증가할 때마다, react.js는 새로운 row가 추가되는 것으로 인식하고, 이에 따라 기존의 row는 exit로 사라진다(AnimationPresence를 통해) */
               >
                 {data?.results.slice(1) // 배너 영화 1개를 제외한 영화 목록
-                .slice(offset * index, offset * index + offset).map((movie) => (
+                  .slice(offset * index, offset * index + offset).map((movie) => (
                     <Box
+                      variants={boxVariants}
+                      initial="normal"
+                      whileHover="hover"
                       key={movie.id}
                       bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
                     />
