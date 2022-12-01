@@ -38,33 +38,46 @@ const Slider = styled(motion.div)`
 `;
 const Row = styled(motion.div)`
   display: grid;
-  gap: 10px;
+  gap: 5px;
   grid-template-columns: repeat(6, 1fr);
   position: absolute; 
   width: 100%;
 `;
-const Box = styled(motion.div)`
+const Box = styled(motion.div) <{ bgPhoto: string }>`
   background-color: white;
-  height: 200px;
-  color: red;
+  background-image: url(${(props) => props.bgPhoto});
+  background-size: cover;
+  background-position: center center;
+  height: 150px;
   font-size: 66px;
-`;
+  `;
 const rowVariants = {
   hidden: {
-    x: window.innerWidth + 10,  // 사용자 윈도우 너비
+    x: window.innerWidth + 5,  // 사용자 윈도우 너비
   },
   visible: {
     x: 0,
   },
   exit: {
-    x: -window.innerWidth -10, // -10은 1과 6이 붙어있는 것을 막기 위해
+    x: -window.innerWidth - 5, // -10은 1과 6이 붙어있는 것을 막기 위해
   },
 };
+const offset = 6;
 
 function Home() {
   const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "nowPlayng"], getMovies);
   const [index, setIndex] = useState(0);
-  const increseIndex = () => setIndex((prev) => prev + 1);
+  const [leaving, setLeaving] = useState(false);
+  const toggleLeaving = () => setLeaving((prev) => !prev);
+  const increseIndex = () => {
+    if (data) { // data
+      if (leaving) return;
+      toggleLeaving(); // setLeaving(true)는 항상 true가 되서 다른 동작이 되지 않음
+      const totalMovies = data?.results.length - 1; // if (data)를 통해 maybe undefined 오류 방지. 배너 영화 한 개를 제외한 총 개수
+      const maxIndex = Math.ceil(totalMovies / offset) - 1; // 1개 row당 보여지는 영화의 개수(offset=6)으로 나눠 index 상한 설정
+      setIndex((prev) => prev === maxIndex ? 0 : prev + 1);
+    }
+  };
   return (
     <Wraper>
       {isLoading ?
@@ -78,17 +91,25 @@ function Home() {
             <Overview>{data?.results[0].overview}</Overview>
           </Banner>
           <Slider>
-            <AnimatePresence>
+            <AnimatePresence onExitComplete={toggleLeaving} initial={false}>
+              {/* onExitComplete => exit이 완료되면 실행되는 함수
+            initial={false} => 화면 새로고침 시 애니메이션이 작동하지 않는다 */}
               <Row
                 key={index}
                 variants={rowVariants}
                 initial="hidden"
                 animate="visible"
                 exit="exit"
-                transition={{type: "tween", duration: 0.7}} // linear transition
-                /* increaseIndex로 key의 index 값이 증가할 때마다, react.js는 새로운 row가 추가되는 것으로 인식하고, 이에 따라 기존의 row는 exit로 사라진다(AnimationPresence를 통해) */
-                >
-                  {[1,2,3,4,5,6].map((i) => <Box key={i}>{i}</Box>)}
+                transition={{ type: "tween", duration: 0.7 }} // linear transition
+              /* increaseIndex로 key의 index 값이 증가할 때마다, react.js는 새로운 row가 추가되는 것으로 인식하고, 이에 따라 기존의 row는 exit로 사라진다(AnimationPresence를 통해) */
+              >
+                {data?.results.slice(1) // 배너 영화 1개를 제외한 영화 목록
+                .slice(offset * index, offset * index + offset).map((movie) => (
+                    <Box
+                      key={movie.id}
+                      bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                    />
+                  ))}
               </Row>
             </AnimatePresence>
           </Slider>
