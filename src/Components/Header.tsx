@@ -94,7 +94,8 @@ const navVariants = {
   top: {
     backgroundColor: "rgba(0,0,0,0)",},
   scroll: {
-    backgroundColor: "rgba(0,0,0,1)"}, 
+    backgroundColor: "rgba(0,0,0,1)",
+    opacity: 0.5}, 
 };
 
 function Header() {

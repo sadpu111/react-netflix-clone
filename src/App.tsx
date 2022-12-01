@@ -10,7 +10,8 @@ function App() {
     <Router>
       <Header />
       <Routes>
-        <Route path="/" element={<Home />}></Route>
+        <Route path="/*" element={<Home />}></Route>
+        {/* "/*" => Home 컴포넌트 안에서의 url 변경 */}
         <Route path="/tv" element={<Tv />}></Route>
         <Route path="/search" element={<Search />}></Route>
       </Routes>
