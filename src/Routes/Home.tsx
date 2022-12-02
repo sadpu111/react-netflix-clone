@@ -76,12 +76,27 @@ const BigMovie = styled(motion.div)`
   position: absolute;
   width: 40vw;
   height: 80vh;
-  background-color: gray;
-  border-radius: 10px;
-  opacity: 0.5;
   left: 0;
   right: 0;
   margin: 0 auto;
+  background-color: ${(props) => props.theme.black.lighter};
+  overflow: hidden;
+  border-radius: 10px;
+`;
+const BigCover = styled.div`
+  width: 100%;
+  height: 300px;
+  background-size: cover;
+  background-position: center center;
+
+`;
+const BigTitle = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
+  font-size: 30px;
+  font-weight: bold;
+  padding: 10px;
+  position: relative;
+  top: -50px;
 `;
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -136,6 +151,8 @@ function Home() {
     navigate(-1);
   };
   const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "nowPlayng"], getMovies);
+  const clickedMovie = bigMovieMatch?.params.movieId && data?.results.find((movie) => movie.id + "" === bigMovieMatch?.params.movieId);
+  console.log(clickedMovie);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => setLeaving((prev) => !prev);
@@ -210,10 +227,17 @@ function Home() {
                 <BigMovie
                   layoutId={bigMovieMatch.params.movieId}
                   style={{
-                    top: scrollY.get() + 70,
+                    top: scrollY.get() + 100,
                   }}
                 >
-                  hello
+                  {clickedMovie &&
+                    <>
+                      <BigCover style={{ backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(clickedMovie.backdrop_path, )})` }}>
+                      </BigCover>
+                      <BigTitle>
+                        {clickedMovie.title}
+                      </BigTitle>
+                    </>}
                 </BigMovie>
               </>
             ) : null}
