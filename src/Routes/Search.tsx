@@ -1,5 +1,5 @@
 function Search() {
-  return <div>123</div>;
+  return <div>Search page</div>;
 }
 
 
