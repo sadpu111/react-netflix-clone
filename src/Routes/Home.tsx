@@ -98,6 +98,12 @@ const BigTitle = styled.h3`
   position: relative;
   top: -50px;
 `;
+const BigOverview = styled.p`
+  padding: 20px;
+  position: relative;
+  top: -60px;
+  color: ${(props) => props.theme.white.lighter};
+`;
 const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
@@ -237,6 +243,9 @@ function Home() {
                       <BigTitle>
                         {clickedMovie.title}
                       </BigTitle>
+                      <BigOverview>
+                        {clickedMovie.overview}
+                      </BigOverview>
                     </>}
                 </BigMovie>
               </>

@@ -14,6 +14,8 @@
     "framer-motion": "^7.6.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-form-hook": "^0.0.1",
+    "react-hook-form": "^7.40.0",
     "react-query": "^3.39.2",
     "react-router-dom": "^6.4.3",
     "react-scripts": "5.0.1",

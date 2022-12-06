@@ -1,6 +1,7 @@
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
-import { Link, useMatch } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { Link, Navigate, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled(motion.nav)`
@@ -45,7 +46,7 @@ const Page = styled.li`
     color: ${(props) => props.theme.white.lighter}
   }
 `;
-const Search = styled.span`
+const Search = styled.form`
   color: white;
   display: flex;
   align-items: center;
@@ -97,6 +98,9 @@ const navVariants = {
     backgroundColor: "rgba(0,0,0,1)",
     opacity: 0.5}, 
 };
+interface IForm {
+  keyword: string;
+}
 
 function Header() {
   const homeMatch = useMatch("/");
@@ -124,6 +128,11 @@ function Header() {
       }
     });
   }, [scrollY]);
+  const {register, handleSubmit} = useForm<IForm>();
+  const navigate = useNavigate();
+  const onValid = (data: IForm) => {
+    navigate(`/search?keyword=${data.keyword}`);
+  };
   return (
     <Nav 
       variants={navVariants}
@@ -158,8 +167,9 @@ function Header() {
         </Pages>
       </Col>
       <Col>
-        <Search>
+        <Search onSubmit={handleSubmit(onValid)}>
           <Input
+          {...register("keyword", {required: true, minLength: 2})}
             initial={{ scaleX: 0 }}
             animate={inputAnimation}
             transition={{ type: "linear" }}
