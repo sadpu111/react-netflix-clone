@@ -7,6 +7,7 @@ import { getMovies, IGetMoviesResult } from "../api";
 import { makeImagePath } from "../utils";
 
 const Wraper = styled.div`
+overflow: hidden;
   background-color: black;
   padding-bottom: 200px;
 `;
@@ -166,13 +167,16 @@ function Home() {
     navigate(`/movies/${movieId}`);
   }
   const increseIndex = () => {
-    if (data) { // data
+    if (data) {
       if (leaving) return;
       toggleLeaving(); // setLeaving(true)는 항상 true가 되서 다른 동작이 되지 않음
       const totalMovies = data?.results.length - 1; // if (data)를 통해 maybe undefined 오류 방지. 배너 영화 한 개를 제외한 총 개수
       const maxIndex = Math.floor(totalMovies / offset) - 1; // 1개 row당 보여지는 영화의 개수(offset=6)으로 나눠 index 상한 설정
       setIndex((prev) => prev === maxIndex ? 0 : prev + 1);
     }
+  };
+  const decreaseIndex = () => {
+
   };
   return (
     <Wraper>
@@ -190,6 +194,7 @@ function Home() {
             <AnimatePresence onExitComplete={toggleLeaving} initial={false}>
               {/* onExitComplete => exit이 완료되면 실행되는 함수
             initial={false} => 화면 새로고침 시 애니메이션이 작동하지 않는다 */}
+            <button>왼쪽</button>
               <Row
                 key={index}
                 variants={rowVariants}
@@ -221,6 +226,7 @@ function Home() {
                     </Box>
                   ))}
               </Row>
+              <button>왼쪽</button>
             </AnimatePresence>
           </Slider>
           <AnimatePresence>
@@ -238,7 +244,7 @@ function Home() {
                 >
                   {clickedMovie &&
                     <>
-                      <BigCover style={{ backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(clickedMovie.backdrop_path, )})` }}>
+                      <BigCover style={{ backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(clickedMovie.backdrop_path,)})` }}>
                       </BigCover>
                       <BigTitle>
                         {clickedMovie.title}
