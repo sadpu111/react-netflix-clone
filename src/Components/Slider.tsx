@@ -106,11 +106,28 @@ const BigTitle = styled.h3`
 `;
 const BigMovieDetails = styled.div`
 `;
-const Yaer = styled.h3`
+const Year = styled.h3`
   color: ${(props) => props.theme.white.lighter};
+  font-weight: bold;
+  font-size: 24px;
+  margin-top: -40px;
+  margin-left: 20px;
 `;
 const Genres = styled.h3`
 color: ${(props) => props.theme.white.lighter};
+font-weight: bold;
+margin-top: 10px;
+margin-left: 20px;
+`;
+const Genre = styled.span`
+  text-align: center;
+  font-weight: normal;
+  padding-top: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: ${(props) => props.theme.blue};
+  margin-left: 5px;
+  border-radius: 5px;
 `;
 const BigOverview = styled.p`
   padding: 20px;
@@ -318,12 +335,12 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
                     {clickedMovie.title}
                   </BigTitle>
                   <BigMovieDetails>
-                    <Yaer>
+                    <Year>
                       {new Date(detailData?.release_date as string).getFullYear()}
-                    </Yaer>
+                    </Year>
                     <Genres>
-                    {detailData?.genres.map((data) => (
-                        <span> {data.name} </span>
+                      Genres: {detailData?.genres.map((data) => (
+                        <Genre> {data.name} </Genre>
                       ))}
                     </Genres>
                     <BigOverview>
