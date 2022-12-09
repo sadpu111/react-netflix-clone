@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { useNavigate, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails } from "../api";
-import { genres, makeImagePath, MovieStatus } from "../utils";
+import { makeImagePath, MovieStatus } from "../utils";
 
 const Category = styled.h2`
   font-size: 24px;
@@ -108,6 +108,9 @@ const BigMovieDetails = styled.div`
 `;
 const Yaer = styled.h3`
   color: ${(props) => props.theme.white.lighter};
+`;
+const Genres = styled.h3`
+color: ${(props) => props.theme.white.lighter};
 `;
 const BigOverview = styled.p`
   padding: 20px;
@@ -318,6 +321,11 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
                     <Yaer>
                       {new Date(detailData?.release_date as string).getFullYear()}
                     </Yaer>
+                    <Genres>
+                    {detailData?.genres.map((data) => (
+                        <span> {data.name} </span>
+                      ))}
+                    </Genres>
                     <BigOverview>
                       {clickedMovie.overview}
                     </BigOverview>
