@@ -1,7 +1,7 @@
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link, Navigate, useMatch, useNavigate } from "react-router-dom";
+import { Link, useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const Nav = styled(motion.nav)`
@@ -98,6 +98,9 @@ const navVariants = {
   scroll: {
     backgroundColor: "rgba(0,0,0,1)",
     opacity: 0.9}, 
+  hover: {
+    backgroundColor: "rgba(0,0,0,1)",
+    opacity: 0.8},
 };
 interface IForm {
   keyword: string;
@@ -138,7 +141,9 @@ function Header() {
     <Nav 
       variants={navVariants}
       initial="top"
-      animate={navAnimation}>
+      animate={navAnimation}
+      whileHover="hover"
+      >
       <Col>
         <Logo
           variants={logoVariants}

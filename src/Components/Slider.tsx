@@ -3,10 +3,17 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { useNavigate, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
-import getMovies, { IGetMoviesResult } from "../api";
-import { makeImagePath } from "../utils";
+import { IGetMoviesResult, getMovies } from "../api";
+import { makeImagePath, MovieStatus } from "../utils";
 
-
+const Category = styled.h2`
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 20px;
+  margin-left: 10px;
+  color: ${(props) => props.theme.white.lighter};
+  text-transform: uppercase;
+`;
 const Slider = styled(motion.div)`
   height: 150px;
   column-gap: 5px;
@@ -165,12 +172,12 @@ export const infoVariants = {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 };
-
 const offset = 6;
-export function MovieSlider() {
-  const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "nowPlayng"], getMovies);
+
+export function MovieSlider({ status }: { status: MovieStatus }) {
+  const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", status], () => getMovies(status));
+  const bigMovieMatch = useMatch(`/movies/${status}/:movieId`);
   const { scrollY } = useScroll();
-  const bigMovieMatch = useMatch("/movies/:movieId");
   const navigate = useNavigate(); // url 이동을 위한 hook
   const onOverlayClick = () => {
     navigate(-1);
@@ -180,8 +187,8 @@ export function MovieSlider() {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => setLeaving((prev) => !prev);
-  const onBoxClicked = (movieId: number) => {
-    navigate(`/movies/${movieId}`);
+  const onBoxClicked = ({ movieId, status, }: {movieId: number; status: string;}) => {
+    navigate(`/movies/${status}/${movieId}`);
   };
   const width = window.innerWidth;
   const increseIndex = () => {
@@ -208,12 +215,19 @@ export function MovieSlider() {
   return (
     <>
       <Slider>
+        <Category>
+          {status === "now_playing"
+            ? "Now Playing"
+            : status === "top_rated"
+              ? "Top Rated"
+              : "Popular"}
+        </Category>
         <AnimatePresence onExitComplete={toggleLeaving} initial={false} custom={{ width, toPrev }}>
           {/* onExitComplete => exit이 완료되면 실행되는 함수
             initial={false} => 화면 새로고침 시 애니메이션이 작동하지 않는다 */}
           <Thumbnails
             custom={{ width, toPrev }}
-            key={index}
+            key={status + index}
             variants={thumbnailsVariants}
             initial="hidden"
             animate="visible"
@@ -224,12 +238,13 @@ export function MovieSlider() {
             {data?.results.slice(1) // 배너 영화 1개를 제외한 영화 목록
               .slice(offset * index, offset * index + offset).map((movie) => (
                 <Thumbnail
-                  layoutId={movie.id + ""}
-                  onClick={() => onBoxClicked(movie.id)}
+                  layoutId={status + movie.id + ""}
+                  onClick={() => onBoxClicked({movieId: movie.id, status: status})}
                   /* onBoxClicked에 movie.id라는 전달인자를 넘겨주기 위해 () => 익명함수를 사용 */
                   variants={thumbnailVariants}
                   initial="normal"
                   whileHover="hover"
+                  transition={{ type: "tween" }}
                   key={movie.id}
                   bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
                 >
@@ -275,9 +290,10 @@ export function MovieSlider() {
             <Overlay
               onClick={onOverlayClick}
               animate={{ opacity: 0.3 }}
-              exit={{ opacity: 0 }} />
+              exit={{ opacity: 0 }}>
+            </Overlay>
             <BigMovie
-              layoutId={bigMovieMatch.params.movieId}
+              layoutId={status + bigMovieMatch.params.movieId + ""}
               style={{
                 top: scrollY.get() + 100,
               }}

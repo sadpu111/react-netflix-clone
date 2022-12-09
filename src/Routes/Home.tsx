@@ -5,7 +5,7 @@ import { useMatch, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { getMovies, IGetMoviesResult } from "../api";
 import { MovieSlider } from "../Components/Slider";
-import { makeImagePath } from "../utils";
+import { makeImagePath, MovieStatus } from "../utils";
 
 
 const Wraper = styled.div`
@@ -42,7 +42,7 @@ const Overview = styled.p`
 
 function Home() {
 
-  const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "nowPlayng"], getMovies);
+  const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "nowPlayng"], () => getMovies(MovieStatus.now_playing));
   const [randomIndex, setRandomIndex] = useState(0);
   useEffect(() => {
     setRandomIndex(() => Math.floor(Math.random() * 20))
@@ -58,7 +58,9 @@ function Home() {
             <Title>{data?.results[randomIndex].title}</Title>
             <Overview>{data?.results[randomIndex].overview}</Overview>
           </Banner>
-        <MovieSlider />
+        <MovieSlider status={MovieStatus.now_playing}/>
+        <MovieSlider status={MovieStatus.top_rated}/>
+        <MovieSlider status={MovieStatus.popular}/>
         </>
       }
     </Wraper>
