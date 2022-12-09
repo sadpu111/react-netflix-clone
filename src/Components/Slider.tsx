@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { useNavigate, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { IGetMoviesResult, getMovies } from "../api";
-import { makeImagePath, MovieStatus } from "../utils";
+import { genres, makeImagePath, MovieStatus } from "../utils";
 
 const Category = styled.h2`
   font-size: 24px;
@@ -20,6 +20,7 @@ const Slider = styled(motion.div)`
   position: relative;
   top: -100px;
   align-content: center;
+  margin-bottom: 100px;
 `;
 const SliderBtn = styled(motion.button) <{ isRight: boolean }>`
   position: absolute;
@@ -33,6 +34,7 @@ const SliderBtn = styled(motion.button) <{ isRight: boolean }>`
   height: 100%;
   width: 35px;
   border: none;
+  z-index: 2;
   color: ${(props) => props.theme.white.lighter};
   svg {
     width: 28px;
@@ -86,13 +88,13 @@ const BigMovie = styled(motion.div)`
   background-color: ${(props) => props.theme.black.lighter};
   overflow: hidden;
   border-radius: 10px;
+  z-index: 4;
 `;
 const BigCover = styled.div`
   width: 100%;
   height: 300px;
   background-size: cover;
   background-position: center center;
-
 `;
 const BigTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
@@ -101,6 +103,9 @@ const BigTitle = styled.h3`
   padding: 10px;
   position: relative;
   top: -50px;
+`;
+const Genres = styled.div`
+  color: ${(porps) => porps.theme.white.lighter};
 `;
 const BigOverview = styled.p`
   padding: 20px;
@@ -113,8 +118,9 @@ const Overlay = styled(motion.div)`
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 1);
+  background-color: rgba(0, 0, 0, 0.5);
   opacity: 0;
+  z-index: 3;
 `;
 const sliderBtnVariants = {
   normal: {
