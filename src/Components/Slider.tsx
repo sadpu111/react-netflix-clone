@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { useNavigate, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { IGetMoviesResult, getMovies } from "../api";
+import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails } from "../api";
 import { genres, makeImagePath, MovieStatus } from "../utils";
 
 const Category = styled.h2`
@@ -64,7 +64,7 @@ const Thumbnail = styled(motion.div) <{ bgPhoto: string }>`
   }
   cursor: pointer;
 `;
-export const Info = styled(motion.div)`
+export const ThumbTitle = styled(motion.div)`
 padding: 10px;
 background-color: ${(props) => props.theme.black.darker};
 opacity: 0;
@@ -104,13 +104,15 @@ const BigTitle = styled.h3`
   position: relative;
   top: -50px;
 `;
-const Genres = styled.div`
-  color: ${(porps) => porps.theme.white.lighter};
+const BigMovieDetails = styled.div`
+`;
+const Yaer = styled.h3`
+  color: ${(props) => props.theme.white.lighter};
 `;
 const BigOverview = styled.p`
   padding: 20px;
   position: relative;
-  top: -60px;
+  top: 50px;
   color: ${(props) => props.theme.white.lighter};
 `;
 const Overlay = styled(motion.div)`
@@ -167,7 +169,7 @@ const thumbnailsVariants = {
       x: toPrev ? width + 5 : -width - 5 // 사용자 윈도우 너비
     }),
 };
-export const infoVariants = {
+export const thumbTitleVariants = {
   hover: {
     transition: {
       delay: 0.5,
@@ -181,8 +183,9 @@ export const infoVariants = {
 const offset = 6;
 
 export function MovieSlider({ status }: { status: MovieStatus }) {
-  const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", status], () => getMovies(status));
   const bigMovieMatch = useMatch(`/movies/${status}/:movieId`);
+  const { data, } = useQuery<IGetMoviesResult>(["movies", status], () => getMovies(status));
+  const { data: detailData, } = useQuery<IGetMovieDetails>(["movieDetails", bigMovieMatch?.params.movieId], () => getMovieDetails(bigMovieMatch?.params.movieId));
   const { scrollY } = useScroll();
   const navigate = useNavigate(); // url 이동을 위한 hook
   const onOverlayClick = () => {
@@ -193,7 +196,7 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => setLeaving((prev) => !prev);
-  const onBoxClicked = ({ movieId, status, }: {movieId: number; status: string;}) => {
+  const onBoxClicked = ({ movieId, status, }: { movieId: number; status: string; }) => {
     navigate(`/movies/${status}/${movieId}`);
   };
   const width = window.innerWidth;
@@ -245,7 +248,7 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
               .slice(offset * index, offset * index + offset).map((movie) => (
                 <Thumbnail
                   layoutId={status + movie.id + ""}
-                  onClick={() => onBoxClicked({movieId: movie.id, status: status})}
+                  onClick={() => onBoxClicked({ movieId: movie.id, status: status })}
                   /* onBoxClicked에 movie.id라는 전달인자를 넘겨주기 위해 () => 익명함수를 사용 */
                   variants={thumbnailVariants}
                   initial="normal"
@@ -254,9 +257,9 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
                   key={movie.id}
                   bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
                 >
-                  <Info variants={infoVariants}>
+                  <ThumbTitle variants={thumbTitleVariants}>
                     <h4>{movie.title}</h4>
-                  </Info>
+                  </ThumbTitle>
                 </Thumbnail>
               ))}
           </Thumbnails>
@@ -311,9 +314,14 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
                   <BigTitle>
                     {clickedMovie.title}
                   </BigTitle>
-                  <BigOverview>
-                    {clickedMovie.overview}
-                  </BigOverview>
+                  <BigMovieDetails>
+                    <Yaer>
+                      {new Date(detailData?.release_date as string).getFullYear()}
+                    </Yaer>
+                    <BigOverview>
+                      {clickedMovie.overview}
+                    </BigOverview>
+                  </BigMovieDetails>
                 </>}
             </BigMovie>
           </>
