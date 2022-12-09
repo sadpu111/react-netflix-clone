@@ -12,7 +12,8 @@ const Nav = styled(motion.nav)`
   width: 100%;
   top: 0;
   background-color: black;
-  font-size: 14px;
+  font-size: 16px;
+  font-weight: bold;
   padding: 20px 60px;
   color: white;
 `;
@@ -96,7 +97,7 @@ const navVariants = {
     backgroundColor: "rgba(0,0,0,0)",},
   scroll: {
     backgroundColor: "rgba(0,0,0,1)",
-    opacity: 0.5}, 
+    opacity: 0.9}, 
 };
 interface IForm {
   keyword: string;
