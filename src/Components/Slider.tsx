@@ -250,11 +250,10 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
     if (runtime) {
       let hour = Math.floor(runtime / 60);
       let min = Math.floor(runtime % 60);
-
       let hourValue = hour > 0 ? hour + "h" : "";
       let minValue = min > 0 ? min + "m" : "";
 
-      return hourValue + minValue;
+      return hourValue + " " + minValue;
     }
   };
   return (
