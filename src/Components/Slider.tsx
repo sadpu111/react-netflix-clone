@@ -92,7 +92,7 @@ const BigMovie = styled(motion.div)`
 `;
 const BigCover = styled.div`
   width: 100%;
-  height: 300px;
+  height: 350px;
   background-size: cover;
   background-position: center center;
 `;
@@ -112,6 +112,10 @@ const Year = styled.h3`
   font-size: 24px;
   margin-top: -40px;
   margin-left: 20px;
+`;
+const Logo = styled.div`
+  width: 30px;
+  height: 20px;
 `;
 const Genres = styled.h3`
 color: ${(props) => props.theme.white.lighter};
@@ -140,7 +144,7 @@ const Overlay = styled(motion.div)`
   top: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 1);
   opacity: 0;
   z-index: 3;
 `;
@@ -318,7 +322,7 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
           <>
             <Overlay
               onClick={onOverlayClick}
-              animate={{ opacity: 0.3 }}
+              animate={{ opacity: 0.7, transition: {duration: 0.3} }}
               exit={{ opacity: 0 }}>
             </Overlay>
             <BigMovie
@@ -338,6 +342,9 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
                     <Year>
                       {new Date(detailData?.release_date as string).getFullYear()}
                     </Year>
+                    <Logo>
+                    {`${clickedMovie.production_companies}`}
+                    </Logo>
                     <Genres>
                       Genres: {detailData?.genres.map((data) => (
                         <Genre> {data.name} </Genre>
