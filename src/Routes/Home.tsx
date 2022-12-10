@@ -1,7 +1,5 @@
-import { motion, AnimatePresence, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
-import { useQueries, useQuery } from "react-query";
-import { useMatch, useNavigate } from "react-router-dom";
+import { useQuery } from "react-query";
 import styled from "styled-components";
 import { getMovies, IGetMoviesResult } from "../api";
 import { MovieSlider } from "../Components/Slider";

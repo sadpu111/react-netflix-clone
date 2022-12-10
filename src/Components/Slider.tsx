@@ -113,9 +113,10 @@ const Year = styled.h3`
   margin-top: -40px;
   margin-left: 20px;
 `;
-const Logo = styled.div`
-  width: 30px;
-  height: 20px;
+const Runtime = styled.h1`
+  font-size: 15px;
+  font-weight: bold;
+  color: ${(props) => props.theme.white.lighter};
 `;
 const Genres = styled.h3`
 color: ${(props) => props.theme.white.lighter};
@@ -245,6 +246,17 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
       setIndex((prev) => prev === minIndex ? maxIndex : prev - 1);
     };
   };
+  const runtimeCalculator = (runtime: number | undefined) => {
+    if (runtime) {
+      let hour = Math.floor(runtime / 60);
+      let min = Math.floor(runtime % 60);
+
+      let hourValue = hour > 0 ? hour + "h" : "";
+      let minValue = min > 0 ? min + "m" : "";
+
+      return hourValue + minValue;
+    }
+  };
   return (
     <>
       <Slider>
@@ -322,7 +334,7 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
           <>
             <Overlay
               onClick={onOverlayClick}
-              animate={{ opacity: 0.7, transition: {duration: 0.3} }}
+              animate={{ opacity: 0.7, transition: { duration: 0.3 } }}
               exit={{ opacity: 0 }}>
             </Overlay>
             <BigMovie
@@ -342,9 +354,9 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
                     <Year>
                       {new Date(detailData?.release_date as string).getFullYear()}
                     </Year>
-                    <Logo>
-                    {`${clickedMovie.production_companies}`}
-                    </Logo>
+                    <Runtime>
+                      {runtimeCalculator(detailData?.runtime)}
+                    </Runtime>
                     <Genres>
                       Genres: {detailData?.genres.map((data) => (
                         <Genre> {data.name} </Genre>
