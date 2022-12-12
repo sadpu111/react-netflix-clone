@@ -3,8 +3,8 @@ import { useState } from "react";
 import { useQuery } from "react-query";
 import { useNavigate, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails, IGetMovieCredit, getMovieCredit } from "../api";
-import { makeImagePath, MovieStatus, TvStatus } from "../utils";
+import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails, IGetMovieCredit, getMovieCredit, getTvShows, IGetTvShowsResult, IGetTvShowDetails } from "../api";
+import { makeImagePath, MovieStatus, TvShowStatus } from "../utils";
 import { Ratings } from "./Ratings"
 
 const Category = styled.h2`
@@ -426,24 +426,25 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
       </AnimatePresence>
     </>);
 };
-
-export function TvSlider({ status }: { status: TvStatus }) {
-  const bigMovieMatch = useMatch(`/movies/${status}/:movieId`);
-  const { data, } = useQuery<IGetMoviesResult>(["tv", status], () => getMovies(status));
-  const { data: detailData, } = useQuery<IGetMovieDetails>(["movieDetails", bigMovieMatch?.params.movieId], () => getMovieDetails(bigMovieMatch?.params.movieId));
-  const { data: creditData, } = useQuery<IGetMovieCredit>(["movieCredit", bigMovieMatch?.params.movieId], () => getMovieCredit(bigMovieMatch?.params.movieId));
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+export function TvShowSlider({ status }: { status: TvShowStatus }) {
+  const bigTvShowMatch = useMatch(`/tvShows/${status}/:tvShowId`);
+  const { data, } = useQuery<IGetTvShowsResult>(["tvShows", status], () => getTvShows(status));
+  const { data: detailData, } = useQuery<IGetTvShowDetails>(["tvShowDetails", bigTvShowMatch?.params.tvShowId], () => getMovieDetails(bigTvShowMatch?.params.tvShowId));
+  const { data: creditData, } = useQuery<IGetMovieCredit>(["tvShowCredit", bigTvShowMatch?.params.tvShowId], () => getMovieCredit(bigTvShowMatch?.params.tvShowId));
   const { scrollY } = useScroll();
   const navigate = useNavigate(); // url 이동을 위한 hook
   const onOverlayClick = () => {
     navigate(-1);
   };
   const [toPrev, setToPrev] = useState(false);
-  const clickedMovie = bigMovieMatch?.params.movieId && data?.results.find((movie) => movie.id + "" === bigMovieMatch?.params.movieId);
+  const clickedMovie = bigTvShowMatch?.params.tvShowId && data?.results.find((movie) => movie.id + "" === bigTvShowMatch?.params.tvShowId);
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => setLeaving((prev) => !prev);
-  const onBoxClicked = ({ movieId, status, }: { movieId: number; status: string; }) => {
-    navigate(`/movies/${status}/${movieId}`);
+  const onBoxClicked = ({ tvShowId, status, }: { tvShowId: number; status: string; }) => {
+    navigate(`/tvShows/${status}/${tvShowId}`);
   };
   const width = window.innerWidth;
   const increseIndex = () => {
@@ -482,7 +483,7 @@ export function TvSlider({ status }: { status: TvStatus }) {
       <Slider>
         <Category>
           {status === "on_the_air"
-            ? "Now Playing"
+            ? "On Air"
             : status === "top_rated"
               ? "Top Rated"
               : "Popular"}
@@ -497,24 +498,22 @@ export function TvSlider({ status }: { status: TvStatus }) {
             initial="hidden"
             animate="visible"
             exit="exit"
-            transition={{ type: "tween", duration: 0.7 }} // linear transition
-          /* increaseIndex로 key의 index 값이 증가할 때마다, react.js는 새로운 row가 추가되는 것으로 인식하고, 이에 따라 기존의 row는 exit로 사라진다(AnimationPresence를 통해) */
+            transition={{ type: "tween", duration: 0.7 }}
           >
-            {data?.results.slice(1) // 배너 영화 1개를 제외한 영화 목록
-              .slice(offset * index, offset * index + offset).map((movie) => (
+            {data?.results.slice(1) 
+              .slice(offset * index, offset * index + offset).map((tvShow) => (
                 <Thumbnail
-                  layoutId={status + movie.id + ""}
-                  onClick={() => onBoxClicked({ movieId: movie.id, status: status })}
-                  /* onBoxClicked에 movie.id라는 전달인자를 넘겨주기 위해 () => 익명함수를 사용 */
+                  layoutId={status + tvShow.id + ""}
+                  onClick={() => onBoxClicked({ tvShowId: tvShow.id, status: status })}
                   variants={thumbnailVariants}
                   initial="normal"
                   whileHover="hover"
                   transition={{ type: "tween" }}
-                  key={movie.id}
-                  bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                  key={tvShow.id}
+                  bgPhoto={makeImagePath(tvShow.backdrop_path, "w500")}
                 >
                   <ThumbTitle variants={thumbTitleVariants}>
-                    <h4>{movie.title}</h4>
+                    <h4>{tvShow.name}</h4>
                   </ThumbTitle>
                 </Thumbnail>
               ))}
@@ -550,7 +549,7 @@ export function TvSlider({ status }: { status: TvStatus }) {
         </SliderBtn>
       </Slider>
       <AnimatePresence>
-        {bigMovieMatch ? (
+        {bigTvShowMatch ? (
           <>
             <Overlay
               onClick={onOverlayClick}
@@ -558,7 +557,7 @@ export function TvSlider({ status }: { status: TvStatus }) {
               exit={{ opacity: 0 }}>
             </Overlay>
             <BigMovie
-              layoutId={status + bigMovieMatch.params.movieId + ""}
+              layoutId={status + bigTvShowMatch?.params.tvShowId + ""}
               style={{
                 top: scrollY.get() + 100,
               }}
@@ -568,17 +567,13 @@ export function TvSlider({ status }: { status: TvStatus }) {
                   <BigCover style={{ backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(clickedMovie.backdrop_path,)})` }}>
                   </BigCover>
                   <BigTitle>
-                    {clickedMovie.title}
                   </BigTitle>
                   <BigMovieDetails>
                     <Year>
-                      {new Date(detailData?.release_date as string).getFullYear()}
                     </Year>
                     <Stars>
-                      <Ratings rating={detailData?.vote_average as number} />
                     </Stars>
                     <Runtime>
-                      Running time: {runtimeCalculator(detailData?.runtime)}
                     </Runtime>
                     <Genres>
                       Genres: {detailData?.genres.map((data) => (
@@ -600,4 +595,4 @@ export function TvSlider({ status }: { status: TvStatus }) {
         ) : null}
       </AnimatePresence>
     </>);
-}
+};

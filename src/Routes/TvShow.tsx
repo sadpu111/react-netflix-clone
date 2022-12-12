@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import styled from "styled-components";
 import { getTvShows, IGetTvShowsResult } from "../api";
-import { TvSlider } from "../Components/Slider";
-import { makeImagePath, TvStatus } from "../utils";
+import { TvShowSlider } from "../Components/Slider";
+import { makeImagePath, TvShowStatus, MovieStatus } from "../utils";
 
 
 const Wraper = styled.div`
   overflow: hidden;
   background-color: black;
-  padding-bottom: 200px;
   align-items: center;
 `;
 const Loader = styled.div`
@@ -39,7 +38,7 @@ const Overview = styled.p`
 
 
 function TvShow() {
-  const { data, isLoading } = useQuery<IGetTvShowsResult>(["tvs", "onTheAir"], () => getTvShows(TvStatus.on_the_air));
+  const { data, isLoading } = useQuery<IGetTvShowsResult>(["tvs", "popular"], () => getTvShows(TvShowStatus.top_rated));
   const [randomIndex, setRandomIndex] = useState(0);
   useEffect(() => {
     setRandomIndex(() => Math.floor(Math.random() * 20))
@@ -55,7 +54,9 @@ function TvShow() {
             <Title>{data?.results[randomIndex].name}</Title>
             <Overview>{data?.results[randomIndex].overview}</Overview>
           </Banner>
-
+          <TvShowSlider status={TvShowStatus.on_the_air}/>
+          <TvShowSlider status={TvShowStatus.top_rated}/>
+          <TvShowSlider status={TvShowStatus.popular}/>
         </>
       }
     </Wraper>

@@ -10,7 +10,7 @@ export enum MovieStatus {
   "popular" = "popular",
 };
 
-export enum TvStatus {
+export enum TvShowStatus {
   "on_the_air" = "on_the_air",
   "popular" = "popular",
   "top_rated" = "top_rated",

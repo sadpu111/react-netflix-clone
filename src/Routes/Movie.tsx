@@ -9,7 +9,6 @@ import { makeImagePath, MovieStatus } from "../utils";
 const Wraper = styled.div`
   overflow: hidden;
   background-color: black;
-  padding-bottom: 200px;
   align-items: center;
 `;
 const Loader = styled.div`
@@ -33,6 +32,7 @@ const Title = styled.h2`
   margin-bottom: 10px;
 `;
 const Overview = styled.p`
+  margin-top: 50px;
   font-size: 25px;
   width: 50%;
 `;
@@ -40,7 +40,7 @@ const Overview = styled.p`
 
 function Home() {
 
-  const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "nowPlayng"], () => getMovies(MovieStatus.now_playing));
+  const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "popular"], () => getMovies(MovieStatus.popular));
   const [randomIndex, setRandomIndex] = useState(0);
   useEffect(() => {
     setRandomIndex(() => Math.floor(Math.random() * 20))

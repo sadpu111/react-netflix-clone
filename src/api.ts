@@ -71,15 +71,15 @@ export interface IGetMovieCredit {
 }
 
 export function getMovies(status: string) {
-  return fetch(`${BASE_URL}/movie/${status}?api_key=${API_KEY}&language=en-US&page=1&region=kr`).then((response) => response.json());
+  return fetch(`${BASE_URL}/movie/${status}?api_key=${API_KEY}&language=en-US`).then((response) => response.json());
 };
 
 export function getMovieDetails(movieId: string | undefined) {
-  return fetch(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=en-US&page=1&region=kr`).then((response) => response.json());
+  return fetch(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=en-US`).then((response) => response.json());
 };
 
 export function getMovieCredit(movieId: string | undefined) {
-  return fetch(`${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}&language=en-US&page=1&region=kr`).then(
+  return fetch(`${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}&language=en-US`).then(
     (response) => response.json()
   );
 };
@@ -106,7 +106,7 @@ export interface IGetTvShowsResult {
   ];
 };
 
-export interface IGetTvShowDetail {
+export interface IGetTvShowDetails {
   backdrop_path: string;
   created_by: [
     {
@@ -246,7 +246,16 @@ export interface IGetTvShowCredit {
   id: number;
 };
 export function getTvShows(status: string) {
-  return fetch(`${BASE_URL}/tv/${status}?api_key=${API_KEY}&language=en-US&page=1&region=kr`).then(
+  return fetch(`${BASE_URL}/tv/${status}?api_key=${API_KEY}&language=en-US`).then(
     (response) => response.json()
   );
 }
+export function getTvShowDetails(tvShowId: string | undefined) {
+  return fetch(`${BASE_URL}/tv/${tvShowId}?api_key=${API_KEY}&language=en-US`).then((response) => response.json());
+};
+
+export function getTvShowCredit(tvShowId: string | undefined) {
+  return fetch(`${BASE_URL}/tv/${tvShowId}/credits?api_key=${API_KEY}&language=en-US`).then(
+    (response) => response.json()
+  );
+};
