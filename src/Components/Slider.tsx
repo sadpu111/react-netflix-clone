@@ -4,7 +4,7 @@ import { useQuery } from "react-query";
 import { useNavigate, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails, IGetMovieCredit, getMovieCredit } from "../api";
-import { makeImagePath, MovieStatus } from "../utils";
+import { makeImagePath, MovieStatus, TvStatus } from "../utils";
 import { Ratings } from "./Ratings"
 
 const Category = styled.h2`
@@ -107,7 +107,7 @@ const BigCover = styled.div`
 `;
 const BigTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
-  font-size: 30px;
+  font-size: 26px;
   font-weight: bold;
   padding: 10px;
   position: relative;
@@ -307,6 +307,181 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
       <Slider>
         <Category>
           {status === "now_playing"
+            ? "Now Playing"
+            : status === "top_rated"
+              ? "Top Rated"
+              : "Popular"}
+        </Category>
+        <AnimatePresence onExitComplete={toggleLeaving} initial={false} custom={{ width, toPrev }}>
+          {/* onExitComplete => exit이 완료되면 실행되는 함수
+            initial={false} => 화면 새로고침 시 애니메이션이 작동하지 않는다 */}
+          <Thumbnails
+            custom={{ width, toPrev }}
+            key={status + index}
+            variants={thumbnailsVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            transition={{ type: "tween", duration: 0.7 }} // linear transition
+          /* increaseIndex로 key의 index 값이 증가할 때마다, react.js는 새로운 row가 추가되는 것으로 인식하고, 이에 따라 기존의 row는 exit로 사라진다(AnimationPresence를 통해) */
+          >
+            {data?.results.slice(1) // 배너 영화 1개를 제외한 영화 목록
+              .slice(offset * index, offset * index + offset).map((movie) => (
+                <Thumbnail
+                  layoutId={status + movie.id + ""}
+                  onClick={() => onBoxClicked({ movieId: movie.id, status: status })}
+                  /* onBoxClicked에 movie.id라는 전달인자를 넘겨주기 위해 () => 익명함수를 사용 */
+                  variants={thumbnailVariants}
+                  initial="normal"
+                  whileHover="hover"
+                  transition={{ type: "tween" }}
+                  key={movie.id}
+                  bgPhoto={makeImagePath(movie.backdrop_path, "w500")}
+                >
+                  <ThumbTitle variants={thumbTitleVariants}>
+                    <h4>{movie.title}</h4>
+                  </ThumbTitle>
+                </Thumbnail>
+              ))}
+          </Thumbnails>
+        </AnimatePresence>
+        <SliderBtn
+          onClick={decreaseIndex}
+          isRight={false}
+          variants={sliderBtnVariants}
+          initial="normal"
+          whileHover="hover">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 256 512"
+            fill="currentColor"
+          >
+            <path d="M137.4 406.6l-128-127.1C3.125 272.4 0 264.2 0 255.1s3.125-16.38 9.375-22.63l128-127.1c9.156-9.156 22.91-11.9 34.88-6.943S192 115.1 192 128v255.1c0 12.94-7.781 24.62-19.75 29.58S146.5 415.8 137.4 406.6z" />
+          </svg>
+        </SliderBtn>
+        <SliderBtn
+          onClick={increseIndex}
+          isRight={true}
+          variants={sliderBtnVariants}
+          initial="normal"
+          whileHover="hover">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 256 512"
+            fill="currentColor"
+          >
+            <path d="M118.6 105.4l128 127.1C252.9 239.6 256 247.8 256 255.1s-3.125 16.38-9.375 22.63l-128 127.1c-9.156 9.156-22.91 11.9-34.88 6.943S64 396.9 64 383.1V128c0-12.94 7.781-24.62 19.75-29.58S109.5 96.23 118.6 105.4z" />
+          </svg>
+        </SliderBtn>
+      </Slider>
+      <AnimatePresence>
+        {bigMovieMatch ? (
+          <>
+            <Overlay
+              onClick={onOverlayClick}
+              animate={{ opacity: 0.7, transition: { duration: 0.3 } }}
+              exit={{ opacity: 0 }}>
+            </Overlay>
+            <BigMovie
+              layoutId={status + bigMovieMatch.params.movieId + ""}
+              style={{
+                top: scrollY.get() + 100,
+              }}
+            >
+              {clickedMovie &&
+                <>
+                  <BigCover style={{ backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(clickedMovie.backdrop_path,)})` }}>
+                  </BigCover>
+                  <BigTitle>
+                    {clickedMovie.title}
+                  </BigTitle>
+                  <BigMovieDetails>
+                    <Year>
+                      {new Date(detailData?.release_date as string).getFullYear()}
+                    </Year>
+                    <Stars>
+                      <Ratings rating={detailData?.vote_average as number} />
+                    </Stars>
+                    <Runtime>
+                      Running time: {runtimeCalculator(detailData?.runtime)}
+                    </Runtime>
+                    <Genres>
+                      Genres: {detailData?.genres.map((data) => (
+                        <Genre> {data.name} </Genre>
+                      ))}
+                    </Genres>
+                    <Cast>
+                      Cast: {creditData?.cast.splice(0, 3).map((prop) => (
+                        <Actors>{prop.name}</Actors>
+                      ))}
+                    </Cast>
+                    <BigOverview>
+                      {clickedMovie.overview}
+                    </BigOverview>
+                  </BigMovieDetails>
+                </>}
+            </BigMovie>
+          </>
+        ) : null}
+      </AnimatePresence>
+    </>);
+};
+
+export function TvSlider({ status }: { status: TvStatus }) {
+  const bigMovieMatch = useMatch(`/movies/${status}/:movieId`);
+  const { data, } = useQuery<IGetMoviesResult>(["tv", status], () => getMovies(status));
+  const { data: detailData, } = useQuery<IGetMovieDetails>(["movieDetails", bigMovieMatch?.params.movieId], () => getMovieDetails(bigMovieMatch?.params.movieId));
+  const { data: creditData, } = useQuery<IGetMovieCredit>(["movieCredit", bigMovieMatch?.params.movieId], () => getMovieCredit(bigMovieMatch?.params.movieId));
+  const { scrollY } = useScroll();
+  const navigate = useNavigate(); // url 이동을 위한 hook
+  const onOverlayClick = () => {
+    navigate(-1);
+  };
+  const [toPrev, setToPrev] = useState(false);
+  const clickedMovie = bigMovieMatch?.params.movieId && data?.results.find((movie) => movie.id + "" === bigMovieMatch?.params.movieId);
+  const [index, setIndex] = useState(0);
+  const [leaving, setLeaving] = useState(false);
+  const toggleLeaving = () => setLeaving((prev) => !prev);
+  const onBoxClicked = ({ movieId, status, }: { movieId: number; status: string; }) => {
+    navigate(`/movies/${status}/${movieId}`);
+  };
+  const width = window.innerWidth;
+  const increseIndex = () => {
+    if (data) {
+      if (leaving) return;
+      setToPrev(false);
+      toggleLeaving(); // setLeaving(true)는 항상 true가 되서 다른 동작이 되지 않음
+      const totalMovies = data?.results.length - 1; // if (data)를 통해 maybe undefined 오류 방지. 배너 영화 한 개를 제외한 총 개수
+      const maxIndex = Math.floor(totalMovies / offset) - 1; // 1개 row당 보여지는 영화의 개수(offset=6)으로 나눠 index 상한 설정
+      setIndex((prev) => prev === maxIndex ? 0 : prev + 1);
+    };
+  };
+  const decreaseIndex = () => {
+    if (data) {
+      if (leaving) return;
+      setToPrev(true);
+      toggleLeaving();
+      const totalMovies = data?.results.length - 1;
+      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      const minIndex = 0;
+      setIndex((prev) => prev === minIndex ? maxIndex : prev - 1);
+    };
+  };
+  const runtimeCalculator = (runtime: number | undefined) => {
+    if (runtime) {
+      let hour = Math.floor(runtime / 60);
+      let min = Math.floor(runtime % 60);
+      let hourValue = hour > 0 ? hour + "h" : "";
+      let minValue = min > 0 ? min + "m" : "";
+
+      return hourValue + " " + minValue;
+    }
+  };
+  return (
+    <>
+      <Slider>
+        <Category>
+          {status === "on_the_air"
             ? "Now Playing"
             : status === "top_rated"
               ? "Top Rated"

@@ -33,7 +33,7 @@ const Title = styled.h2`
   margin-bottom: 10px;
 `;
 const Overview = styled.p`
-  font-size: 20px;
+  font-size: 25px;
   width: 50%;
 `;
 

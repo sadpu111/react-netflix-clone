@@ -1,9 +1,8 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import Home from "./Routes/Home";
-import Tv from "./Routes/Tv";
+import Home from "./Routes/Movie";
 import Search from "./Routes/Search";
 import Header from "./Components/Header";
-
+import TvShow from "./Routes/TvShow";
 
 
 function App() {
@@ -13,7 +12,7 @@ function App() {
       <Routes>
         <Route path="/*" element={<Home />}></Route>
         {/* "/*" => Home 컴포넌트 안에서의 url 변경 */}
-        <Route path="/tv" element={<Tv />}></Route>
+        <Route path="/tv" element={<TvShow />}></Route>
         <Route path="/search" element={<Search />}></Route>
       </Routes>
     </Router>

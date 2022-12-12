@@ -161,7 +161,7 @@ function Header() {
         <Pages>
           <Page>
             <Link to="/">
-              Home
+              Movie
             </Link>
             {homeMatch && <Circle layoutId="cirlce" />}
           </Page>
