@@ -1,7 +1,3 @@
-import { Star } from "@mui/icons-material";
-import styled from "styled-components";
-
-
 
 export function Ratings({ rating }: { rating: number }) {
   const ArrayFullStars = [];

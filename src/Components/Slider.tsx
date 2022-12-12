@@ -1,12 +1,12 @@
-import { Star } from "@mui/icons-material";
 import { AnimatePresence, motion, useScroll, } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { useNavigate, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
-import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails } from "../api";
+import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails, IGetMovieCredit, getMovieCredit } from "../api";
 import { makeImagePath, MovieStatus } from "../utils";
 import { Ratings } from "./Ratings"
+
 const Category = styled.h2`
   font-size: 24px;
   font-weight: 800;
@@ -120,14 +120,15 @@ const BigMovieDetails = styled.div`
     "ratings"
     "runtime"
     "genres"
+    "cast"
     "overview";
 `;
 const Year = styled.h3`
   grid-area: year;
   color: ${(props) => props.theme.white.lighter};
   font-weight: bold;
-  font-size: 24px;
-  margin-top: -40px;
+  font-size: 26px;
+  margin-top: -35px;
   margin-left: 20px;
 `;
 const Stars = styled.div`
@@ -158,6 +159,23 @@ const Genre = styled.span`
   padding-left: 5px;
   padding-right: 5px;
   background-color: ${(props) => props.theme.blue};
+  margin-left: 5px;
+  border-radius: 5px;
+`;
+const Cast = styled.div`
+  color: ${(props) => props.theme.white.lighter};
+  font-weight: bold;
+  margin-top: 10px;
+  margin-left: 20px;
+  grid-area: cast;
+`;
+const Actors = styled.span`
+  text-align: center;
+  font-weight: normal;
+  padding-top: 2px;
+  padding-left: 5px;
+  padding-right: 5px;
+  background-color: ${(props) => props.theme.black.darker};
   margin-left: 5px;
   border-radius: 5px;
 `;
@@ -234,11 +252,11 @@ export const thumbTitleVariants = {
   },
 };
 const offset = 6;
-
 export function MovieSlider({ status }: { status: MovieStatus }) {
   const bigMovieMatch = useMatch(`/movies/${status}/:movieId`);
   const { data, } = useQuery<IGetMoviesResult>(["movies", status], () => getMovies(status));
   const { data: detailData, } = useQuery<IGetMovieDetails>(["movieDetails", bigMovieMatch?.params.movieId], () => getMovieDetails(bigMovieMatch?.params.movieId));
+  const { data: creditData, } = useQuery<IGetMovieCredit>(["movieCredit", bigMovieMatch?.params.movieId], () => getMovieCredit(bigMovieMatch?.params.movieId));
   const { scrollY } = useScroll();
   const navigate = useNavigate(); // url 이동을 위한 hook
   const onOverlayClick = () => {
@@ -392,6 +410,11 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
                         <Genre> {data.name} </Genre>
                       ))}
                     </Genres>
+                    <Cast>
+                      Cast: {creditData?.cast.splice(0, 3).map((prop) => (
+                        <Actors>{prop.name}</Actors>
+                      ))}
+                    </Cast>
                     <BigOverview>
                       {clickedMovie.overview}
                     </BigOverview>

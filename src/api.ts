@@ -1,14 +1,6 @@
 const API_KEY = "833228a23373ddc804c04843b6c4434a";
 const BASE_URL = "https://api.themoviedb.org/3/"
 
-
-interface IMovie {
-  id: number;
-  backdrop_path: string;
-  poster_path: string;
-  title: string;
-  overview: string;
-};
 export interface IGetMoviesResult {
   page: number;
   results: IGetMovieDetails[];
@@ -57,6 +49,25 @@ export interface IGetMovieDetails {
   video: boolean;
   vote_average: number;
   vote_count: number;
+};
+export interface IGetMovieCredit {
+  id: number;
+  cast: [
+    {
+      adult: boolean;
+      gender: number;
+      id: number;
+      known_for_department: string;
+      name: string;
+      original_name: string;
+      popularity: number;
+      profile_path: string;
+      cast_id: number;
+      character: string;
+      credit_id: string;
+      order: number;
+    }
+  ];
 }
 
 export function getMovies(status: string) {
@@ -66,3 +77,9 @@ export function getMovies(status: string) {
 export function getMovieDetails(movieId: string | undefined) {
   return fetch(`${BASE_URL}/movie/${movieId}?api_key=${API_KEY}&language=en-US&page=1&region=kr`).then((response) => response.json());
 };
+
+export function getMovieCredit(movieId: string | undefined) {
+  return fetch(`${BASE_URL}/movie/${movieId}/credits?api_key=${API_KEY}&language=en-US&page=1&region=kr`).then(
+    (response) => response.json()
+  );
+}
