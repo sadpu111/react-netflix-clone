@@ -117,7 +117,7 @@ export interface IGetTvShowDetails {
       profile_path: string;
     }
   ];
-  episode_run_time: number;
+  episode_run_time: number[];
   first_air_date: string;
   genres: [
     {

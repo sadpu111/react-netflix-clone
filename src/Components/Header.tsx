@@ -95,13 +95,16 @@ const logoVariants = {
 };
 const navVariants = {
   top: {
-    backgroundColor: "rgba(0,0,0,0)",},
+    backgroundColor: "rgba(0,0,0,0)",
+  },
   scroll: {
     backgroundColor: "rgba(0,0,0,1)",
-    opacity: 0.9}, 
+    opacity: 0.9
+  },
   hover: {
     backgroundColor: "rgba(0,0,0,1)",
-    opacity: 0.8},
+    opacity: 0.8
+  },
 };
 interface IForm {
   keyword: string;
@@ -109,7 +112,8 @@ interface IForm {
 
 function Header() {
   const homeMatch = useMatch("/");
-  const TvShowMatch = useMatch("tv");
+  const tVShowMatch = useMatch("/tvShows");
+  const searchMatch = useMatch("/search");
   const [searchOpen, setSearchOpen] = useState(false);
   const inputAnimation = useAnimation(); // 특정 코드를 통해 애니메이션 실행
   const navAnimation = useAnimation();
@@ -133,18 +137,18 @@ function Header() {
       }
     });
   }, [scrollY]);
-  const {register, handleSubmit} = useForm<IForm>();
+  const { register, handleSubmit } = useForm<IForm>();
   const navigate = useNavigate();
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`);
   };
   return (
-    <Nav 
+    <Nav
       variants={navVariants}
       initial="top"
       animate={navAnimation}
       whileHover="hover"
-      >
+    >
       <Col>
         <Logo
           variants={logoVariants}
@@ -166,17 +170,23 @@ function Header() {
             {homeMatch && <Circle layoutId="cirlce" />}
           </Page>
           <Page>
-            <Link to="tv">
+            <Link to="tvShows">
               TV Show
             </Link>
-            {TvShowMatch && <Circle layoutId="cirlce" />}
+            {tVShowMatch && <Circle layoutId="cirlce" />}
+          </Page>
+          <Page>
+            <Link to="search">
+              Search
+            </Link>
+            {searchMatch && <Circle layoutId="cirlce" />}
           </Page>
         </Pages>
       </Col>
       <Col>
         <Search onSubmit={handleSubmit(onValid)}>
           <Input
-          {...register("keyword", {required: true, minLength: 2})}
+            {...register("keyword", { required: true, minLength: 2 })}
             initial={{ scaleX: 0 }}
             animate={inputAnimation}
             transition={{ type: "linear" }}

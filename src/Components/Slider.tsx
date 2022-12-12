@@ -1,9 +1,9 @@
 import { AnimatePresence, motion, useScroll, } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { useNavigate, useMatch, useParams } from "react-router-dom";
+import { useNavigate, useMatch,  } from "react-router-dom";
 import styled from "styled-components";
-import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails, IGetMovieCredit, getMovieCredit, getTvShows, IGetTvShowsResult, IGetTvShowDetails } from "../api";
+import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails, IGetMovieCredit, getMovieCredit, getTvShows, IGetTvShowsResult, IGetTvShowDetails, IGetTvShowCredit, getTvShowDetails, getTvShowCredit } from "../api";
 import { makeImagePath, MovieStatus, TvShowStatus } from "../utils";
 import { Ratings } from "./Ratings"
 
@@ -426,20 +426,22 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
       </AnimatePresence>
     </>);
 };
-///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 export function TvShowSlider({ status }: { status: TvShowStatus }) {
   const bigTvShowMatch = useMatch(`/tvShows/${status}/:tvShowId`);
   const { data, } = useQuery<IGetTvShowsResult>(["tvShows", status], () => getTvShows(status));
-  const { data: detailData, } = useQuery<IGetTvShowDetails>(["tvShowDetails", bigTvShowMatch?.params.tvShowId], () => getMovieDetails(bigTvShowMatch?.params.tvShowId));
-  const { data: creditData, } = useQuery<IGetMovieCredit>(["tvShowCredit", bigTvShowMatch?.params.tvShowId], () => getMovieCredit(bigTvShowMatch?.params.tvShowId));
+  const { data: tvShowDetailData, } = useQuery<IGetTvShowDetails>(["tvShowDetails", bigTvShowMatch?.params.tvShowId], () => getTvShowDetails(bigTvShowMatch?.params.tvShowId));
+  const { data: tvShowCreditData, } = useQuery<IGetTvShowCredit>(["tvShowCredit", bigTvShowMatch?.params.tvShowId], () => getTvShowCredit(bigTvShowMatch?.params.tvShowId));
   const { scrollY } = useScroll();
   const navigate = useNavigate(); // url 이동을 위한 hook
   const onOverlayClick = () => {
     navigate(-1);
   };
   const [toPrev, setToPrev] = useState(false);
-  const clickedMovie = bigTvShowMatch?.params.tvShowId && data?.results.find((movie) => movie.id + "" === bigTvShowMatch?.params.tvShowId);
+  const clickedTvShow = bigTvShowMatch?.params.tvShowId && data?.results.find((tvShow) => tvShow.id + "" === bigTvShowMatch?.params.tvShowId);
+  console.log(clickedTvShow)
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => setLeaving((prev) => !prev);
@@ -452,8 +454,8 @@ export function TvShowSlider({ status }: { status: TvShowStatus }) {
       if (leaving) return;
       setToPrev(false);
       toggleLeaving(); // setLeaving(true)는 항상 true가 되서 다른 동작이 되지 않음
-      const totalMovies = data?.results.length - 1; // if (data)를 통해 maybe undefined 오류 방지. 배너 영화 한 개를 제외한 총 개수
-      const maxIndex = Math.floor(totalMovies / offset) - 1; // 1개 row당 보여지는 영화의 개수(offset=6)으로 나눠 index 상한 설정
+      const totalTvShows = data?.results.length - 1; // if (data)를 통해 maybe undefined 오류 방지. 배너 영화 한 개를 제외한 총 개수
+      const maxIndex = Math.floor(totalTvShows / offset) - 1; // 1개 row당 보여지는 영화의 개수(offset=6)으로 나눠 index 상한 설정
       setIndex((prev) => prev === maxIndex ? 0 : prev + 1);
     };
   };
@@ -462,21 +464,11 @@ export function TvShowSlider({ status }: { status: TvShowStatus }) {
       if (leaving) return;
       setToPrev(true);
       toggleLeaving();
-      const totalMovies = data?.results.length - 1;
-      const maxIndex = Math.floor(totalMovies / offset) - 1;
+      const totalTvShows = data?.results.length - 1;
+      const maxIndex = Math.floor(totalTvShows / offset) - 1;
       const minIndex = 0;
       setIndex((prev) => prev === minIndex ? maxIndex : prev - 1);
     };
-  };
-  const runtimeCalculator = (runtime: number | undefined) => {
-    if (runtime) {
-      let hour = Math.floor(runtime / 60);
-      let min = Math.floor(runtime % 60);
-      let hourValue = hour > 0 ? hour + "h" : "";
-      let minValue = min > 0 ? min + "m" : "";
-
-      return hourValue + " " + minValue;
-    }
   };
   return (
     <>
@@ -500,7 +492,7 @@ export function TvShowSlider({ status }: { status: TvShowStatus }) {
             exit="exit"
             transition={{ type: "tween", duration: 0.7 }}
           >
-            {data?.results.slice(1) 
+            {data?.results.slice(1)
               .slice(offset * index, offset * index + offset).map((tvShow) => (
                 <Thumbnail
                   layoutId={status + tvShow.id + ""}
@@ -562,31 +554,35 @@ export function TvShowSlider({ status }: { status: TvShowStatus }) {
                 top: scrollY.get() + 100,
               }}
             >
-              {clickedMovie &&
+              {clickedTvShow &&
                 <>
-                  <BigCover style={{ backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(clickedMovie.backdrop_path,)})` }}>
+                  <BigCover style={{ backgroundImage: `linear-gradient(to top, black, transparent), url(${makeImagePath(clickedTvShow.backdrop_path,)})` }}>
                   </BigCover>
                   <BigTitle>
+                    {clickedTvShow.name}
                   </BigTitle>
                   <BigMovieDetails>
                     <Year>
+                    {new Date(tvShowDetailData?.first_air_date as string).getFullYear()}
                     </Year>
                     <Stars>
+                      <Ratings rating={tvShowDetailData?.vote_average as number}/>
                     </Stars>
                     <Runtime>
+                      Running time: {tvShowDetailData?.episode_run_time.length !== 0 ? tvShowDetailData?.episode_run_time + "m": "-" }
                     </Runtime>
                     <Genres>
-                      Genres: {detailData?.genres.map((data) => (
+                      Genres: {tvShowDetailData?.genres.map((data) => (
                         <Genre> {data.name} </Genre>
                       ))}
                     </Genres>
                     <Cast>
-                      Cast: {creditData?.cast.splice(0, 3).map((prop) => (
+                      Cast: {tvShowCreditData?.cast.splice(0, 3).map((prop) => (
                         <Actors>{prop.name}</Actors>
                       ))}
                     </Cast>
                     <BigOverview>
-                      {clickedMovie.overview}
+                      {clickedTvShow.overview}
                     </BigOverview>
                   </BigMovieDetails>
                 </>}

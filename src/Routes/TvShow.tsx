@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import styled from "styled-components";
 import { getTvShows, IGetTvShowsResult } from "../api";
 import { TvShowSlider } from "../Components/Slider";
-import { makeImagePath, TvShowStatus, MovieStatus } from "../utils";
+import { makeImagePath, TvShowStatus, } from "../utils";
 
 
 const Wraper = styled.div`

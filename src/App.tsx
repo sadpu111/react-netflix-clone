@@ -1,5 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import Home from "./Routes/Movie";
+import Movie from "./Routes/Movie";
 import Search from "./Routes/Search";
 import Header from "./Components/Header";
 import TvShow from "./Routes/TvShow";
@@ -10,10 +10,10 @@ function App() {
     <Router>
       <Header />
       <Routes>
-        <Route path="/*" element={<Home />}></Route>
+        <Route path="/*" element={<Movie />}></Route>
         {/* "/*" => Home 컴포넌트 안에서의 url 변경 */}
-        <Route path="/tv" element={<TvShow />}></Route>
-        <Route path="/search" element={<Search />}></Route>
+        <Route path="/tvShows*" element={<TvShow />}></Route>
+        <Route path="/search*" element={<Search />}></Route>
       </Routes>
     </Router>
 
