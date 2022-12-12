@@ -1,7 +1,7 @@
 import { AnimatePresence, motion, useScroll, } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import { useNavigate, useMatch,  } from "react-router-dom";
+import { useNavigate, useMatch, } from "react-router-dom";
 import styled from "styled-components";
 import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails, IGetMovieCredit, getMovieCredit, getTvShows, IGetTvShowsResult, IGetTvShowDetails, IGetTvShowCredit, getTvShowDetails, getTvShowCredit } from "../api";
 import { makeImagePath, MovieStatus, TvShowStatus } from "../utils";
@@ -33,7 +33,7 @@ const SliderBtn = styled(motion.button) <{ isRight: boolean }>`
   align-items: center;
   justify-content: center;
   height: 100%;
-  width: 35px;
+  width: 45px;
   border: none;
   z-index: 2;
   color: ${(props) => props.theme.white.lighter};
@@ -563,23 +563,23 @@ export function TvShowSlider({ status }: { status: TvShowStatus }) {
                   </BigTitle>
                   <BigMovieDetails>
                     <Year>
-                    {new Date(tvShowDetailData?.first_air_date as string).getFullYear()}
+                      {new Date(tvShowDetailData?.first_air_date as string).getFullYear()}
                     </Year>
                     <Stars>
-                      <Ratings rating={tvShowDetailData?.vote_average as number}/>
+                      <Ratings rating={tvShowDetailData?.vote_average as number} />
                     </Stars>
                     <Runtime>
-                      Running time: {tvShowDetailData?.episode_run_time.length !== 0 ? tvShowDetailData?.episode_run_time + "m": "-" }
+                      Running time: {tvShowDetailData?.episode_run_time.length !== 0 ? tvShowDetailData?.episode_run_time + "m" : "-"}
                     </Runtime>
                     <Genres>
-                      Genres: {tvShowDetailData?.genres.map((data) => (
+                      Genres: {tvShowDetailData?.genres.length ? tvShowDetailData?.genres.map((data) => (
                         <Genre> {data.name} </Genre>
-                      ))}
+                      )) : "-"}
                     </Genres>
                     <Cast>
-                      Cast: {tvShowCreditData?.cast.splice(0, 3).map((prop) => (
+                      Cast: {tvShowCreditData?.cast.length ? tvShowCreditData?.cast.splice(0, 3).map((prop) => (
                         <Actors>{prop.name}</Actors>
-                      ))}
+                      )) : "-"}
                     </Cast>
                     <BigOverview>
                       {clickedTvShow.overview}
