@@ -89,6 +89,14 @@ const BigMovie = styled(motion.div)`
   overflow: hidden;
   border-radius: 10px;
   z-index: 4;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    border-radius: 2px;
+    background: #ccc;
+  }
 `;
 const BigCover = styled.div`
   width: 100%;
@@ -105,6 +113,7 @@ const BigTitle = styled.h3`
   top: -50px;
 `;
 const BigMovieDetails = styled.div`
+  display: grid;
 `;
 const Year = styled.h3`
   color: ${(props) => props.theme.white.lighter};
@@ -116,7 +125,9 @@ const Year = styled.h3`
 const Runtime = styled.h1`
   font-size: 15px;
   font-weight: bold;
+  margin-left: 20px;
   color: ${(props) => props.theme.white.lighter};
+  background-color
 `;
 const Genres = styled.h3`
 color: ${(props) => props.theme.white.lighter};
@@ -137,7 +148,7 @@ const Genre = styled.span`
 const BigOverview = styled.p`
   padding: 20px;
   position: relative;
-  top: 50px;
+  top: 10px;
   color: ${(props) => props.theme.white.lighter};
 `;
 const Overlay = styled(motion.div)`
@@ -354,7 +365,7 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
                       {new Date(detailData?.release_date as string).getFullYear()}
                     </Year>
                     <Runtime>
-                      {runtimeCalculator(detailData?.runtime)}
+                      Running time: {runtimeCalculator(detailData?.runtime)}
                     </Runtime>
                     <Genres>
                       Genres: {detailData?.genres.map((data) => (
