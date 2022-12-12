@@ -1,3 +1,4 @@
+import { Star } from "@mui/icons-material";
 import { AnimatePresence, motion, useScroll, } from "framer-motion";
 import { useState } from "react";
 import { useQuery } from "react-query";
@@ -5,7 +6,7 @@ import { useNavigate, useMatch, useParams } from "react-router-dom";
 import styled from "styled-components";
 import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails } from "../api";
 import { makeImagePath, MovieStatus } from "../utils";
-
+import { Ratings } from "./Ratings"
 const Category = styled.h2`
   font-size: 24px;
   font-weight: 800;
@@ -95,7 +96,7 @@ const BigMovie = styled(motion.div)`
   }
   &::-webkit-scrollbar-thumb {
     border-radius: 2px;
-    background: #ccc;
+    background: rgba(255, 255, 255, 0.7);
   }
 `;
 const BigCover = styled.div`
@@ -114,22 +115,37 @@ const BigTitle = styled.h3`
 `;
 const BigMovieDetails = styled.div`
   display: grid;
+  grid-template-areas: 
+    "year"
+    "ratings"
+    "runtime"
+    "genres"
+    "overview";
 `;
 const Year = styled.h3`
+  grid-area: year;
   color: ${(props) => props.theme.white.lighter};
   font-weight: bold;
   font-size: 24px;
   margin-top: -40px;
   margin-left: 20px;
 `;
+const Stars = styled.div`
+  grid-area: ratings;
+  display: inline-flex;
+  margin: 0px;
+  margin-left: 20px;
+`;
 const Runtime = styled.h1`
+  grid-area: runtime;
   font-size: 15px;
   font-weight: bold;
+  margin-top: 10px;
   margin-left: 20px;
   color: ${(props) => props.theme.white.lighter};
-  background-color
 `;
 const Genres = styled.h3`
+grid-area: genres;
 color: ${(props) => props.theme.white.lighter};
 font-weight: bold;
 margin-top: 10px;
@@ -146,6 +162,7 @@ const Genre = styled.span`
   border-radius: 5px;
 `;
 const BigOverview = styled.p`
+grid-area: overview;
   padding: 20px;
   position: relative;
   top: 10px;
@@ -364,6 +381,9 @@ export function MovieSlider({ status }: { status: MovieStatus }) {
                     <Year>
                       {new Date(detailData?.release_date as string).getFullYear()}
                     </Year>
+                    <Stars>
+                      <Ratings rating={detailData?.vote_average as number} />
+                    </Stars>
                     <Runtime>
                       Running time: {runtimeCalculator(detailData?.runtime)}
                     </Runtime>

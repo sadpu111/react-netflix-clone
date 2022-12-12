@@ -1,7 +1,7 @@
 export function makeImagePath(path: string, format?: string) {
-    return `https://image.tmdb.org/t/p/${format ? format : "original"}/${path}`
-  };
-// 여기서 id는 api에서의 backdrop_path!
+  return `https://image.tmdb.org/t/p/${format ? format : "original"}/${path}`
+};
+
 
 export enum MovieStatus {
   "now_playing" = "now_playing",
