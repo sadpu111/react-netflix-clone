@@ -2,7 +2,9 @@ import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useMatch, useNavigate } from "react-router-dom";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import styled from "styled-components";
+import { searchState } from "../Atoms";
 
 const Nav = styled(motion.nav)`
   display: flex;
@@ -69,7 +71,7 @@ const Circle = styled(motion.span)`
   background-color: ${(props) => props.theme.red};
 `;
 const Input = styled(motion.input)`
-width: 270px;
+  width: 270px;
   transform-origin: right center;
   position: absolute;
   right: 0px;
@@ -108,25 +110,30 @@ const navVariants = {
 };
 interface IForm {
   keyword: string;
-}
+  extraError?: string;
 
+}
 function Header() {
   const homeMatch = useMatch("/");
   const tVShowMatch = useMatch("/tvShows");
-  const searchMatch = useMatch("/search");
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useRecoilState(searchState);
   const inputAnimation = useAnimation(); // 특정 코드를 통해 애니메이션 실행
+  const iconAnimation = useAnimation();
   const navAnimation = useAnimation();
   const { scrollY } = useScroll();
   const toggleSearch = () => {
+    setSearchOpen((pre) => !pre);
+  };
+  const closeSearch = () => {
     if (searchOpen) {
       inputAnimation.start({
         scaleX: 0,
       });
-    } else {
-      inputAnimation.start({ scaleX: 1 });
+      iconAnimation.start({
+        x: 0,
+      });
+      setSearchOpen((prev) => !prev);
     }
-    setSearchOpen((prev) => !prev);
   };
   useEffect(() => {
     scrollY.onChange(() => {
@@ -137,7 +144,7 @@ function Header() {
       }
     });
   }, [scrollY]);
-  const { register, handleSubmit } = useForm<IForm>();
+  const { register, handleSubmit, } = useForm<IForm>();
   const navigate = useNavigate();
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`);
@@ -149,7 +156,7 @@ function Header() {
       animate={navAnimation}
       whileHover="hover"
     >
-      <Col>
+      <Col onClick={closeSearch}>
         <Logo
           variants={logoVariants}
           whileHover="active"
@@ -175,26 +182,21 @@ function Header() {
             </Link>
             {tVShowMatch && <Circle layoutId="cirlce" />}
           </Page>
-          <Page>
-            <Link to="search">
-              Search
-            </Link>
-            {searchMatch && <Circle layoutId="cirlce" />}
-          </Page>
         </Pages>
       </Col>
       <Col>
         <Search onSubmit={handleSubmit(onValid)}>
           <Input
-            {...register("keyword", { required: true, minLength: 2 })}
+            {...register("keyword", { required: "Please enter at least two characters...", minLength: 2 })}
             initial={{ scaleX: 0 }}
-            animate={inputAnimation}
+            animate={searchOpen ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ type: "linear" }}
             placeholder="Search for movie or TV show... "></Input>
           <motion.svg
+            cursor={"pointer"}
             onClick={toggleSearch}
             transition={{ type: "linear" }}
-            animate={{ x: searchOpen ? -235 : 0 }}
+            animate={searchOpen ? { x: -235 } : { x: 0 }}
             fill="currentColor"
             viewBox="0 0 20 20"
             xmlns="http://www.w3.org/2000/svg"
@@ -205,7 +207,6 @@ function Header() {
               clipRule="evenodd"
             ></path>
           </motion.svg>
-
         </Search>
       </Col>
     </Nav>

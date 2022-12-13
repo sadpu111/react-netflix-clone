@@ -4,7 +4,8 @@ import styled from "styled-components";
 import { getMovies, IGetMoviesResult } from "../api";
 import { MovieSlider } from "../Components/Slider";
 import { makeImagePath, MovieStatus } from "../utils";
-
+import { useSetRecoilState } from "recoil";
+import { searchState } from "../Atoms";
 
 const Wraper = styled.div`
   overflow: hidden;
@@ -37,28 +38,31 @@ const Overview = styled.p`
   width: 50%;
 `;
 
-
 function Home() {
-
   const { data, isLoading } = useQuery<IGetMoviesResult>(["movies", "popular"], () => getMovies(MovieStatus.popular));
   const [randomIndex, setRandomIndex] = useState(0);
+  const setSearchOpen = useSetRecoilState(searchState);
   useEffect(() => {
     setRandomIndex(() => Math.floor(Math.random() * 20))
-  }, [])
+  }, []);
+  const onBannerClick = () => {
+    setSearchOpen(false);
+  };
   return (
     <Wraper>
       {isLoading ?
         <Loader>now loading...</Loader> :
         <>
           <Banner
+            onClick={onBannerClick}
             bgPhoto={makeImagePath(data?.results[randomIndex].backdrop_path || "")}>
             {/* fallback(|| "")를 추가하여, 어떤 이유로 data가 정의되지 않을 때 ""를 출력하도록 한다 */}
             <Title>{data?.results[randomIndex].title}</Title>
             <Overview>{data?.results[randomIndex].overview}</Overview>
           </Banner>
-        <MovieSlider status={MovieStatus.now_playing}/>
-        <MovieSlider status={MovieStatus.top_rated}/>
-        <MovieSlider status={MovieStatus.popular}/>
+          <MovieSlider status={MovieStatus.now_playing} />
+          <MovieSlider status={MovieStatus.top_rated} />
+          <MovieSlider status={MovieStatus.popular} />
         </>
       }
     </Wraper>

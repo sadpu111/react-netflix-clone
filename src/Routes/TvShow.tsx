@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import styled from "styled-components";
 import { getTvShows, IGetTvShowsResult } from "../api";
+import { searchState } from "../Atoms";
 import { TvShowSlider } from "../Components/Slider";
 import { makeImagePath, TvShowStatus, } from "../utils";
 
@@ -36,19 +38,23 @@ const Overview = styled.p`
   width: 50%;
 `;
 
-
 function TvShow() {
   const { data, isLoading } = useQuery<IGetTvShowsResult>(["tvs", "popular"], () => getTvShows(TvShowStatus.top_rated));
   const [randomIndex, setRandomIndex] = useState(0);
+  const setSearchOpen = useSetRecoilState(searchState);
   useEffect(() => {
     setRandomIndex(() => Math.floor(Math.random() * 20))
-  }, [])
+  }, []);
+  const onBannerClick = () => {
+    setSearchOpen(false);
+  };
   return (
     <Wraper>
       {isLoading ?
         <Loader>now loading...</Loader> :
         <>
           <Banner
+            onClick={onBannerClick}
             bgPhoto={makeImagePath(data?.results[randomIndex].backdrop_path || "")}>
             {/* fallback(|| "")를 추가하여, 어떤 이유로 data가 정의되지 않을 때 ""를 출력하도록 한다 */}
             <Title>{data?.results[randomIndex].name}</Title>
