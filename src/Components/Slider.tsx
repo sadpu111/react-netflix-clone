@@ -57,6 +57,7 @@ const Thumbnail = styled(motion.div) <{ bgPhoto: string }>`
   background-position: center center;
   justify-content: center;
   align-items: center;
+  border-radius: 7px;
   &:first-child {
     transform-origin: center left;
   }
@@ -569,7 +570,7 @@ export function TvShowSlider({ status }: { status: TvShowStatus }) {
                       <Ratings rating={tvShowDetailData?.vote_average as number} />
                     </Stars>
                     <Runtime>
-                      Running time: {tvShowDetailData?.episode_run_time.length !== 0 ? tvShowDetailData?.episode_run_time + "m" + " / " + tvShowDetailData?.number_of_episodes + "episodes": "-"}
+                      Running time: {tvShowDetailData?.episode_run_time.length !== 0 ? tvShowDetailData?.episode_run_time + "m" + " / " + tvShowDetailData?.number_of_episodes + " episodes": "-"}
                     </Runtime>
                     <Genres>
                       Genres: {tvShowDetailData?.genres.length ? tvShowDetailData?.genres.map((data) => (

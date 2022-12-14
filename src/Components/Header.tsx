@@ -1,3 +1,4 @@
+import { ResetTv } from "@mui/icons-material";
 import { motion, useAnimation, useScroll } from "framer-motion";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -108,11 +109,10 @@ const navVariants = {
     opacity: 0.8
   },
 };
-interface IForm {
+export interface IForm {
   keyword: string;
   extraError?: string;
-
-}
+};
 function Header() {
   const homeMatch = useMatch("/");
   const tVShowMatch = useMatch("/tvShows");
@@ -148,6 +148,7 @@ function Header() {
   const navigate = useNavigate();
   const onValid = (data: IForm) => {
     navigate(`/search?keyword=${data.keyword}`);
+    setSearchOpen(false);
   };
   return (
     <Nav
@@ -191,7 +192,8 @@ function Header() {
             initial={{ scaleX: 0 }}
             animate={searchOpen ? { scaleX: 1 } : { scaleX: 0 }}
             transition={{ type: "linear" }}
-            placeholder="Search for movie or TV show... "></Input>
+            placeholder="Search for movie or TV show... ">
+          </Input>
           <motion.svg
             cursor={"pointer"}
             onClick={toggleSearch}

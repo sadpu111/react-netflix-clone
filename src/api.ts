@@ -261,6 +261,6 @@ export function getTvShowCredit(tvShowId: string | undefined) {
 };
 
 export function getSearchResult(keyword: string) {
-  return fetch(`${BASE_URL}/multi/${keyword}?api_key=${API_KEY}&language=en-US&query=${keyword}`).then(
+  return fetch(`${BASE_URL}/search/multi/${keyword}?api_key=${API_KEY}&language=en-US&query=${keyword}`).then(
     (response) => response.json())
 };
