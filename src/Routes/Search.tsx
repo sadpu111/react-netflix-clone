@@ -68,8 +68,8 @@ function Search() {
           </svg>
         </SearchBtn>
       </SearchArea>
-      <MovieSearchResults />
-      <TvShowSearchResults />
+      <MovieSearchResults keyword={`${keyword}`}/>
+      <TvShowSearchResults keyword={`${keyword}`} />
     </Wraper>
   );
 }

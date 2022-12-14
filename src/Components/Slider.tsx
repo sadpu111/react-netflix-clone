@@ -7,7 +7,7 @@ import { IGetMoviesResult, getMovies, getMovieDetails, IGetMovieDetails, IGetMov
 import { makeImagePath, MovieStatus, TvShowStatus } from "../utils";
 import { Ratings } from "./Ratings"
 
-const Category = styled.h2`
+export const Category = styled.h2`
   font-size: 24px;
   font-weight: 800;
   margin-bottom: 20px;
@@ -42,14 +42,15 @@ const SliderBtn = styled(motion.button) <{ isRight: boolean }>`
     height: 40px;
   }
 `;
-const Thumbnails = styled(motion.div)`
+export const Thumbnails = styled(motion.div)`
   display: grid;
+  row-gap: 20px;
   column-gap: 10px;
   grid-template-columns: repeat(6, 1fr);
   width: 100%;
   position: absolute;
 `;
-const Thumbnail = styled(motion.div) <{ bgPhoto: string }>`
+export const Thumbnail = styled(motion.div) <{ bgPhoto: string }>`
   height: 150px;
   font-size: 64px;
   background-image: url(${(props) => props.bgPhoto});
@@ -80,7 +81,7 @@ h4 {
   font-weight: 600;
 }
 `;
-const BigMovie = styled(motion.div)`
+export const BigMovie = styled(motion.div)`
   position: absolute;
   width: 40vw;
   height: 80vh;
@@ -100,13 +101,13 @@ const BigMovie = styled(motion.div)`
     background: rgba(255, 255, 255, 0.7);
   }
 `;
-const BigCover = styled.div`
+export const BigCover = styled.div`
   width: 100%;
   height: 350px;
   background-size: cover;
   background-position: center center;
 `;
-const BigTitle = styled.h3`
+export const BigTitle = styled.h3`
   color: ${(props) => props.theme.white.lighter};
   font-size: 26px;
   font-weight: bold;
@@ -114,7 +115,7 @@ const BigTitle = styled.h3`
   position: relative;
   top: -50px;
 `;
-const BigMovieDetails = styled.div`
+export const BigMovieDetails = styled.div`
   display: grid;
   grid-template-areas: 
     "year"
@@ -124,7 +125,7 @@ const BigMovieDetails = styled.div`
     "cast"
     "overview";
 `;
-const Year = styled.h3`
+export const Year = styled.h3`
   grid-area: year;
   color: ${(props) => props.theme.white.lighter};
   font-weight: bold;
@@ -132,13 +133,13 @@ const Year = styled.h3`
   margin-top: -35px;
   margin-left: 20px;
 `;
-const Stars = styled.div`
+export const Stars = styled.div`
   grid-area: ratings;
   display: inline-flex;
   margin: 0px;
   margin-left: 20px;
 `;
-const Runtime = styled.h1`
+export const Runtime = styled.h1`
   grid-area: runtime;
   font-size: 15px;
   font-weight: bold;
@@ -146,14 +147,14 @@ const Runtime = styled.h1`
   margin-left: 20px;
   color: ${(props) => props.theme.white.lighter};
 `;
-const Genres = styled.h3`
+export const Genres = styled.h3`
 grid-area: genres;
 color: ${(props) => props.theme.white.lighter};
 font-weight: bold;
 margin-top: 10px;
 margin-left: 20px;
 `;
-const Genre = styled.span`
+export const Genre = styled.span`
   text-align: center;
   font-weight: normal;
   padding-top: 2px;
@@ -163,14 +164,14 @@ const Genre = styled.span`
   margin-left: 5px;
   border-radius: 5px;
 `;
-const Cast = styled.div`
+export const Cast = styled.div`
   color: ${(props) => props.theme.white.lighter};
   font-weight: bold;
   margin-top: 10px;
   margin-left: 20px;
   grid-area: cast;
 `;
-const Actors = styled.span`
+export const Actors = styled.span`
   text-align: center;
   font-weight: normal;
   padding-top: 2px;
@@ -180,14 +181,14 @@ const Actors = styled.span`
   margin-left: 5px;
   border-radius: 5px;
 `;
-const BigOverview = styled.p`
+export const BigOverview = styled.p`
 grid-area: overview;
   padding: 20px;
   position: relative;
   top: 10px;
   color: ${(props) => props.theme.white.lighter};
 `;
-const Overlay = styled(motion.div)`
+export const Overlay = styled(motion.div)`
   position: fixed;
   top: 0;
   width: 100%;
@@ -196,7 +197,7 @@ const Overlay = styled(motion.div)`
   opacity: 0;
   z-index: 3;
 `;
-const sliderBtnVariants = {
+export const sliderBtnVariants = {
   normal: {
     opacity: 0,
   },
@@ -208,7 +209,7 @@ const sliderBtnVariants = {
     },
   },
 };
-const thumbnailVariants = {
+export const thumbnailVariants = {
   normal: {
     scale: 1,
   },
@@ -222,7 +223,7 @@ const thumbnailVariants = {
     },
   },
 };
-const thumbnailsVariants = {
+export const thumbnailsVariants = {
   hidden: ({ width, toPrev }:
     {
       width: number;
@@ -252,7 +253,7 @@ export const thumbTitleVariants = {
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
 };
-const offset = 6;
+export const offset = 6;
 export function MovieSlider({ status }: { status: MovieStatus }) {
   const bigMovieMatch = useMatch(`/movies/${status}/:movieId`);
   const { data, } = useQuery<IGetMoviesResult>(["movies", status], () => getMovies(status));
