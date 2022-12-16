@@ -13,6 +13,7 @@ const SearchArea = styled.form`
   width: 100%;
   height: 300px;
   display: flex;
+  padding-top: 75px;
   justify-content: center;
   align-items: center;
 `;
@@ -68,7 +69,7 @@ function Search() {
           </svg>
         </SearchBtn>
       </SearchArea>
-      <MovieSearchResults keyword={`${keyword}`}/>
+      <MovieSearchResults keyword={`${keyword}`} />
       <TvShowSearchResults keyword={`${keyword}`} />
     </Wraper>
   );

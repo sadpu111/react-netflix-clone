@@ -68,17 +68,17 @@ export const Thumbnail = styled(motion.div) <{ bgPhoto: string }>`
   cursor: pointer;
 `;
 export const ThumbTitle = styled(motion.div)`
-padding: 10px;
-background-color: ${(props) => props.theme.black.darker};
-opacity: 0;
-position: absolute;
-width: 100%;
-bottom: 0;
-h4 {
-  color: white;
-  text-align: center;
-  font-size: 15px;
-  font-weight: 600;
+  padding: 10px;
+  background-color: ${(props) => props.theme.black.darker};
+  opacity: 0;
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  h4 {
+    color: white;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
 }
 `;
 export const BigMovie = styled(motion.div)`
@@ -443,7 +443,6 @@ export function TvShowSlider({ status }: { status: TvShowStatus }) {
   };
   const [toPrev, setToPrev] = useState(false);
   const clickedTvShow = bigTvShowMatch?.params.tvShowId && data?.results.find((tvShow) => tvShow.id + "" === bigTvShowMatch?.params.tvShowId);
-  console.log(clickedTvShow)
   const [index, setIndex] = useState(0);
   const [leaving, setLeaving] = useState(false);
   const toggleLeaving = () => setLeaving((prev) => !prev);
